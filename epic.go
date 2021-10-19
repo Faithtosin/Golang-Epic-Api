@@ -51,8 +51,13 @@ type PromotionalOffers struct {
 }
 
 type MainPromotionalOffers struct {
-	StartDate string `json:"startDate"`
-	EndDate   string `json:"endDate"`
+	StartDate       string          `json:"startDate"`
+	EndDate         string          `json:"endDate"`
+	DiscountSetting DiscountSetting `json:"discountSetting"`
+}
+
+type DiscountSetting struct {
+	DiscountPercentage int `json:"discountPercentage"`
 }
 
 func main() {
@@ -87,8 +92,15 @@ func GetFreeGames() []string {
 
 	for i := 0; i < len(responseObject.Data.Catalog.SearchStore.Element); i++ {
 		for x := 0; x < len(responseObject.Data.Catalog.SearchStore.Element[i].Promotions.PromotionalOffers); x++ {
-			FreeGames = append(FreeGames, responseObject.Data.Catalog.SearchStore.Element[i].Title)
+			for y := 0; y < len(responseObject.Data.Catalog.SearchStore.Element[i].Promotions.PromotionalOffers[x].MainPromotionalOffers); y++ {
+				discount := responseObject.Data.Catalog.SearchStore.Element[i].Promotions.PromotionalOffers[x].MainPromotionalOffers[y].DiscountSetting.DiscountPercentage
 
+				if discount == 0 {
+
+					FreeGames = append(FreeGames, responseObject.Data.Catalog.SearchStore.Element[i].Title)
+				}
+
+			}
 		}
 	}
 	return FreeGames
